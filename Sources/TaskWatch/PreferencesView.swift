@@ -11,6 +11,12 @@ struct PreferencesView: View {
     @State private var notifyEmail = ""
     @State private var savedConfirmation = false
 
+    @AppStorage("checkForUpdates") private var checkForUpdates = true
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+    }
+
     @State private var isTesting = false
     /// Result of the last "Send test DM": (success, message).
     @State private var testResult: (ok: Bool, message: String)?
@@ -74,6 +80,22 @@ struct PreferencesView: View {
                 Text("Filtering")
             } footer: {
                 Text("When on, comments you post yourself won't trigger a Slack alert. Your identity is detected from your Teamwork token.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
+                Toggle("Check for updates automatically", isOn: $checkForUpdates)
+                HStack {
+                    Text("Current version")
+                    Spacer()
+                    Text(appVersion).foregroundStyle(.secondary)
+                }
+                Button("Check now") { UpdateChecker.shared.check() }
+            } header: {
+                Text("Updates")
+            } footer: {
+                Text("Checks the GitHub releases page once a day. When a newer version is available, the menu bar popover shows an update link.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

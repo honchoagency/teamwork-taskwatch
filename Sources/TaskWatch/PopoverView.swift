@@ -5,6 +5,7 @@ import AppKit
 struct PopoverView: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var poller: Poller
+    @EnvironmentObject private var updateChecker: UpdateChecker
 
     @State private var urlInput = ""
     @State private var errorMessage: String?
@@ -12,6 +13,10 @@ struct PopoverView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            if let version = updateChecker.availableVersion {
+                updateBanner(version: version)
+            }
+
             header
 
             if store.tasks.isEmpty {
@@ -37,6 +42,26 @@ struct PopoverView: View {
     }
 
     // MARK: - Sections
+
+    private func updateBanner(version: String) -> some View {
+        Button {
+            updateChecker.openReleasesPage()
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.down.circle.fill")
+                Text("Update available: \(version)")
+                    .fontWeight(.medium)
+                Spacer()
+                Image(systemName: "arrow.up.right.square")
+                    .font(.caption)
+            }
+            .padding(8)
+            .frame(maxWidth: .infinity)
+            .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 6))
+        }
+        .buttonStyle(.plain)
+        .help("Open the latest release on GitHub")
+    }
 
     private var header: some View {
         HStack {

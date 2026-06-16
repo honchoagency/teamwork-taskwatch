@@ -6,12 +6,14 @@ struct TaskWatchApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var store = AppStore.shared
     @StateObject private var poller = Poller.shared
+    @StateObject private var updateChecker = UpdateChecker.shared
 
     var body: some Scene {
         MenuBarExtra {
             PopoverView()
                 .environmentObject(store)
                 .environmentObject(poller)
+                .environmentObject(updateChecker)
         } label: {
             Image(systemName: poller.hasUnseenActivity ? "bell.badge.fill" : "eye")
         }
@@ -26,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         Notifier.requestAuthorization()
         Poller.shared.start()
+        UpdateChecker.shared.start()
 
         // Defer one runloop tick so the menu bar scene is fully up before we
         // try to front a window.
@@ -61,7 +64,7 @@ enum PreferencesWindowController {
         window.title = "TaskWatch Preferences"
         window.styleMask = [.titled, .closable]
         window.isReleasedWhenClosed = false
-        window.setContentSize(NSSize(width: 460, height: 520))
+        window.setContentSize(NSSize(width: 460, height: 620))
         window.center()
         window.makeKeyAndOrderFront(nil)
         self.window = window

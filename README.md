@@ -108,3 +108,7 @@ their Slack sidebar.
   `TaskWatch: [Task Name] is complete and has been removed from your watch list.`
 - The menu bar icon shows a badge (`bell.badge.fill`) after a comment alert
   fires; opening the popover clears it.
+- **Updates** — on launch and once a day, TaskWatch checks GitHub Releases for a
+  newer version (toggle in Preferences → Updates). When one exists, the popover
+  shows an "Update available" link to the releases page. Detection uses the
+  public, unauthenticated GitHub API, so the repo must stay public.
