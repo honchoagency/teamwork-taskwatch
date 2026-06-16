@@ -68,6 +68,9 @@ sed \
     -e 's/$(MARKETING_VERSION)/'"${VERSION}"'/g' \
     "Resources/Info.plist" > "${APP_BUNDLE}/Contents/Info.plist"
 
+echo "Copying resources..."
+cp "Resources/AppIcon.icns" "${APP_BUNDLE}/Contents/Resources/AppIcon.icns"
+
 echo "Signing (ad-hoc)..."
 codesign --force --deep --sign - "${APP_BUNDLE}"
 
