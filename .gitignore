@@ -1,0 +1,15 @@
+# Build artifacts
+.build/
+.swiftpm/
+TaskWatch.app/
+dmg-staging/
+*.dmg
+*.zip
+
+# Xcode
+*.xcodeproj
+xcuserdata/
+
+# macOS / tooling
+.DS_Store
+.claude

@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed so `git describe` can find the tag
+
+      - name: Build (universal)
+        run: UNIVERSAL=1 bash build.sh
+
+      - name: Package DMG
+        run: |
+          VERSION=${GITHUB_REF_NAME}
+          bash package-dmg.sh "${VERSION}"
+          echo "ASSET=TaskWatch-${VERSION}.dmg" >> "$GITHUB_ENV"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ env.VERSION }}
+          files: ${{ env.ASSET }}
+          body: |
+            ## Install
+
+            1. Download `TaskWatch-${{ env.VERSION }}.dmg`, open it, and drag **TaskWatch** to Applications.
+            2. **First launch only** — TaskWatch isn't notarized, so macOS will block it. Run this once in Terminal:
+               ```
+               xattr -dr com.apple.quarantine "/Applications/TaskWatch.app"
+               ```
+               (Alternatively: open it once, then **System Settings → Privacy & Security → Open Anyway**.)
+            3. Open TaskWatch from the menu bar, then **Preferences** to add your Teamwork token, site URL, Slack bot token, and email. See the README for the one-time Slack app setup.
